@@ -1,0 +1,51 @@
+data:
+  input_path: data/raw/sample_daily.csv
+  processed_path: data/processed/panel.csv
+  date_col: trade_date
+  ticker_col: ticker
+
+preprocess:
+  required_columns: [trade_date, ticker, open, high, low, close, volume, amount, pct_change]
+  fill_method: ffill
+
+features:
+  ma_windows: [5, 10, 20]
+  volume_ma_window: 5
+  return_windows: [5, 10, 20]
+  rolling_extrema_window: 20
+
+pattern:
+  n1_lookback: 10
+  impulse_return_min: 0.30
+  daily_limit_main: 0.095
+  daily_limit_chinext: 0.19
+  daily_limit_star: 0.19
+  pullback_min_days: 3
+  pullback_max_days: 8
+  max_pullback: 0.25
+  breakout_vol_multiplier: 1.3
+  require_above_ma: ma5
+  failure_check_days: 3
+
+signals:
+  score_threshold: 0.55
+  top_k: 5
+  swing_entry_size: 0.35
+  swing_add_size: 0.10
+  tactical_max_size: 0.15
+  max_position_size: 0.50
+  positive_t_gap_threshold: 0.02
+  reverse_t_weak_open_threshold: -0.015
+
+execution:
+  mode: close
+  slippage_bps: 5
+  commission_bps: 3
+  stamp_duty_bps: 10
+  initial_cash: 1000000
+
+experiment:
+  run_swing_only: true
+  run_positive_t: true
+  run_reverse_t: true
+  apply_false_filters: true
